@@ -1,63 +1,128 @@
 # 📘 Book-Scrabble System
 
-A complete object-oriented Java implementation of a Scrabble-inspired game engine.  
-This project was built as part of a university-level **Software Engineering course**, with a strong focus on modularity, performance, and design patterns.
-
-> 🧠 **Note:** This version is purely logical and does not include a graphical interface. The game is run and tested via the console.
+A comprehensive Scrabble game in Java, incorporating advanced software engineering principles and design patterns.  
+The project features:
 
 ---
 
-## 🚀 Features
+## 🚀 Main Features
 
 ### 🔤 Tile Management
+Simulates a tile management system with:
+- Immutable tiles for consistency
+- Design patterns for managing the tile repository (Singleton)
+- Algorithms for random and specific tile retrieval
+- Mechanism to return tiles to the bag
 
-- Immutable `Tile` objects ensure consistency  
-- Singleton `Bag` class manages all tiles and supports:
-  - Random tile retrieval  
-  - Specific tile retrieval  
-  - Returning tiles to the bag  
+### 🖧 Server Management
+- Ensures server stability
+- Manages client connections effectively
 
-### 🧠 Word Verification
+### 📚 Dictionary Integration
+- Utilizes a **Bloom Filter** for efficient real-time word validation
+- Uses a `CacheManager` for optimized data access
 
-- Uses a **Bloom Filter** to efficiently validate if a word exists  
-- Words are checked against files (books) passed to the system  
-- `Dictionary` class:
-  - Caches valid and invalid queries using an internal `CacheManager`
-  - Uses `BloomFilter` for probabilistic lookup
-  - Falls back to full file search when necessary
+### 🧩 Software Engineering Practices
+- Demonstrates modular OOP design
+- Encapsulates file reading operations
+- Implements Strategy design pattern for cache replacement policies
 
-### 💾 Cache System
-
-- Custom `CacheManager` implementation  
-- Supports two cache replacement policies via the **Strategy pattern**:
-  - LRU (Least Recently Used)  
-  - LFU (Least Frequently Used)  
-
-### 📁 File Searching
-
-- `IOSearcher` class performs efficient word searches across multiple book files  
-- Used as a fallback in `Dictionary.challenge`  
-
-### 🖧 Server-Client Architecture
-
-- `MyServer` handles single-threaded client connections  
-- `BookScrabbleHandler` interprets queries in the format:
-  - `"Q,book1.txt,book2.txt,...,word"` (query)
-  - `"C,book1.txt,...,word"` (challenge)  
-- Supports validation and communication in a simulated multiplayer scenario
+This project showcases skills in scalable architecture, data handling, and modern software design practices.
 
 ---
 
-## 🧪 Sample Use Case
+## 🧠 Tile Management (Detailed)
 
-The main class `MainTrain` contains unit-style tests that:
+This part simulates a tile management system for a Scrabble-like word game, showcasing various software engineering principles and practices.
 
-- Simulate real Scrabble-like moves  
-- Validate presence of words  
-- Show cache behavior and Bloom filter efficiency  
+**Features:**
+- **Immutable Tiles**: Ensures tile states remain consistent throughout the game.
+- **Singleton Bag**: Manages the central tile repository with global access and prevents multiple instantiations.
+- **Random and Specific Tile Retrieval**: Uses algorithms to manage and manipulate data structures effectively.
+- **Tile Return Mechanism**: Supports returning tiles to the bag.
 
-### 🏃 To run:
+---
 
-```bash
-javac -d . */*.java
-java test.MainTrain
+## 🧪 Class Overviews
+
+### 🔹 BloomFilter
+
+**Description**:  
+Manages a space-efficient probabilistic data structure used to test element membership.
+
+**Attributes**:
+- `filterBits`: A BitSet representing the filter
+- `hashEngines`: An array of `MessageDigest` instances (hash functions)
+
+**Methods**:
+- `BloomFilter(...)`: Constructor to initialize filter size and hash algorithms  
+- `add(String element)`: Adds an element  
+- `contains(String element)`: Checks if an element might exist  
+- `computeIndex(...)`: Computes the index in the bitset  
+- `toString()`: Debugging representation
+
+---
+
+### 🔹 CacheManager
+
+**Description**:  
+Stores frequently accessed data to reduce repeated expensive operations.
+
+**Attributes**:
+- `cache`: Set of cached items  
+- `maxSize`: Max number of items  
+- `replacementPolicy`: Strategy for cache eviction
+
+**Methods**:
+- `CacheManager(...)`: Constructor  
+- `query(String word)`  
+- `add(String word)`  
+- `remove(String word)`
+
+---
+
+### 🔹 Dictionary
+
+**Description**:  
+Manages word lookups using caching and probabilistic validation.
+
+**Attributes**:
+- `existingWordsCache`: CacheManager for valid words  
+- `nonExistingWordsCache`: CacheManager for invalid words  
+- `bloomFilter`: Probabilistic word presence checker  
+- `fileNames`: File names to load
+
+**Methods**:
+- `Dictionary(...)`: Constructor  
+- `query(String word)`  
+- `challenge(String word)`
+
+---
+
+### 🔹 IOSearcher
+
+**Description**:  
+Performs direct file I/O for word lookup.
+
+**Methods**:
+- `search(String word, String... fileNames)`: Returns `true` if word is found
+
+---
+
+### 🔹 CacheReplacementPolicy (Interface)
+
+**Methods**:
+- `add(String word)`  
+- `remove()`
+
+**Implementations**:
+- **LRU** (Least Recently Used): Removes the least recently used item  
+- **LFU** (Least Frequently Used): Removes the least frequently used item
+
+---
+
+## 📐 Software Engineering Elements & Best Practices
+
+- **Design and Architecture Templates**: Uses the Singleton pattern to manage state  
+- **Strategy Pattern**: To allow flexible cache replacement  
+- **Server-Client Communication**: While this version focuses on logic, the code is structured for future multiplayer support via a server-client model.
